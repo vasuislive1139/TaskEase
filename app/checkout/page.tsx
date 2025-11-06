@@ -12,7 +12,6 @@ import type { Order, Payment } from "@/lib/types"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "@/hooks/use-toast"
-import { OrderSuccessDialog } from "@/components/order-success-dialog"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,8 +27,6 @@ export default function CheckoutPage() {
   const router = useRouter()
   const [paymentMethod, setPaymentMethod] = useState<"credit_card" | "debit_card" | "cash" | "upi">("credit_card")
   const [isProcessing, setIsProcessing] = useState(false)
-  const [showSuccessDialog, setShowSuccessDialog] = useState(false)
-  const [completedOrderId, setCompletedOrderId] = useState<number>(0)
   const [showNoDeliveryAlert, setShowNoDeliveryAlert] = useState(false)
 
   const total = getCartTotal()
@@ -105,13 +102,16 @@ export default function CheckoutPage() {
     // Clear cart
     clearCart()
 
-    setCompletedOrderId(orderId)
     setIsProcessing(false)
-    setShowSuccessDialog(true)
-  }
+    toast({
+      title: "Order Placed Successfully!",
+      description: `Your order #${orderId} has been confirmed and will be delivered soon.`,
+    })
 
-  const handleDialogComplete = () => {
-    router.push("/orders")
+    // Redirect to orders page after a short delay
+    setTimeout(() => {
+      router.push("/orders")
+    }, 1000)
   }
 
   if (cart.length === 0) {
@@ -236,14 +236,6 @@ export default function CheckoutPage() {
           </div>
         </div>
       </main>
-
-      {/* OrderSuccessDialog */}
-      <OrderSuccessDialog
-        open={showSuccessDialog}
-        onOpenChange={setShowSuccessDialog}
-        orderId={completedOrderId}
-        onComplete={handleDialogComplete}
-      />
 
       {/* Alert Dialog for no delivery partner available */}
       <AlertDialog open={showNoDeliveryAlert} onOpenChange={setShowNoDeliveryAlert}>
