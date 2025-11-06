@@ -66,7 +66,7 @@ export function OrderSuccessDialog({ open, onOpenChange, orderId, onComplete }: 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md" showCloseButton={false}>
+      <DialogContent className="sm:max-w-md" onInteractOutside={(e) => e.preventDefault()}>
         {!showFeedback ? (
           <>
             <DialogHeader className="text-center">
